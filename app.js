@@ -142,11 +142,16 @@ app.get("/register", function(req, res){
 });
 // render secret page if user is authenticated
 app.get("/secrets", function(req, res){
-    if (req.isAuthenticated){
-        res.render("secrets");
-    }else{
-        res.redirect("/login");
-    };
+    // query object document in database were the content in secret is not null
+   User.find({"secret": {$ne:null}}, function(err, foundUsers){
+       if (err){
+           console.log(err);
+       }else{
+           if (foundUsers){
+               res.render("secrets", {userWithSecret: foundUsers});
+           };
+       };
+   });
 });
 // render secret post if user is authenticate
 app.get("/submit", function(req, res){
